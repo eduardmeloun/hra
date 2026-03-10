@@ -1,15 +1,1 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<player name="Eda">
-    <position>
-        <x>0</x>
-        <y>0</y>
-    </position>
-    <inventory>
-        <!-- Future inventory items will be added here -->
-    </inventory>
-    <stats>
-        <health>100</health>
-        <level>1</level>
-        <experience>0</experience>
-    </stats>
-</player>
+<player name="Eda"><position><x>-1</x><y>0</y></position><inventory><!--  Future inventory items will be added here  --></inventory><stats><health>100</health><level>1</level><experience>0</experience></stats></player>
