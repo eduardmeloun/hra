@@ -2,60 +2,39 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:output method="xml" indent="yes" encoding="UTF-8"/>
 
-    <xsl:variable name="key" select="'__KLAVESA__'"/>
 
-    <xsl:template match="/">
-        <xsl:apply-templates select="player"/>
+
+    <!-- Identity transform: copies everything as-is unless matched by a more specific template -->
+    <xsl:template match="@*|node()">
+        <xsl:copy>
+            <xsl:apply-templates select="@*|node()"/>
+        </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="player">
-        <!-- Reconstruct player node -->
-        <player>
-            <!-- Copy attributes like name -->
-            <xsl:for-each select="@*">
-                <xsl:attribute name="{name()}">
-                    <xsl:value-of select="."/>
-                </xsl:attribute>
-            </xsl:for-each>
-            
-            <!-- Process children -->
-            <xsl:apply-templates select="position"/>
-            
-            <!-- Copy everything else unchanged -->
-            <xsl:copy-of select="inventory"/>
-            <xsl:copy-of select="stats"/>
-        </player>
+    <!-- Load the current key press from akce.xml -->
+    <xsl:variable name="klavesa" select="document('akce.xml')/akce/stisk/@klavesa"/>
+
+    <!-- Update X coordinate -->
+    <xsl:template match="player/position/x">
+        <xsl:copy>
+            <xsl:choose>
+                <xsl:when test="$klavesa = 'a'"><xsl:value-of select=". - 1"/></xsl:when>
+                <xsl:when test="$klavesa = 'd'"><xsl:value-of select=". + 1"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:copy>
     </xsl:template>
 
-    <xsl:template match="position">
-        <position>
-            <x>
-                <xsl:choose>
-                    <xsl:when test="$key = 'a'">
-                        <xsl:value-of select="number(x) - 1"/>
-                    </xsl:when>
-                    <xsl:when test="$key = 'd'">
-                        <xsl:value-of select="number(x) + 1"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="x"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </x>
-            <y>
-                <xsl:choose>
-                    <xsl:when test="$key = 'w'">
-                        <xsl:value-of select="number(y) - 1"/>
-                    </xsl:when>
-                    <xsl:when test="$key = 's'">
-                        <xsl:value-of select="number(y) + 1"/>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="y"/>
-                    </xsl:otherwise>
-                </xsl:choose>
-            </y>
-        </position>
+    <!-- Update Y coordinate -->
+    <xsl:template match="player/position/y">
+        <xsl:copy>
+            <xsl:choose>
+                <xsl:when test="$klavesa = 'w'"><xsl:value-of select=". - 1"/></xsl:when>
+                <xsl:when test="$klavesa = 's'"><xsl:value-of select=". + 1"/></xsl:when>
+                <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+            </xsl:choose>
+        </xsl:copy>
     </xsl:template>
+
 
 </xsl:stylesheet>

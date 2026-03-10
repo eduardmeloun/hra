@@ -1,6 +1,7 @@
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
+const { Xslt, XmlParser } = require('xslt-processor');
 
 const filePath = path.join(__dirname, 'data', 'akce.xml');
 
@@ -16,6 +17,9 @@ function pridejAkci(klavesa) {
         // Přepíšeme celý soubor, takže udržíme jen poslední stisknutou klávesu
         fs.writeFileSync(filePath, novyObsah, 'utf8');
         console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
+
+        aplikujPohyb();
+
     } catch (err) {
         console.error('Chyba při zápisu do XML:', err);
     }
@@ -46,3 +50,42 @@ process.stdin.on('keypress', (str, key) => {
         pridejAkci(key.name.toLowerCase());
     }
 });
+
+async function aplikujPohyb() {
+    const dataDir = path.join(__dirname, 'data');
+    const edaFile = path.join(dataDir, 'eda.xml');
+    const xsltFile = path.join(dataDir, 'pohyb.xslt');
+
+    // Check if files exist
+    if (!fs.existsSync(edaFile)) {
+        console.error('[CHYBA] Soubor eda.xml nebyl nalezen.');
+        return;
+    }
+
+    if (!fs.existsSync(xsltFile)) {
+        console.error('[CHYBA] Soubor pohyb.xslt nebyl nalezen.');
+        return;
+    }
+
+    try {
+        const xmlString = fs.readFileSync(edaFile, 'utf8');
+        let xsltString = fs.readFileSync(xsltFile, 'utf8');
+
+        const parser = new XmlParser();
+        const xsltEngine = new Xslt();
+
+        // Parsování XML a XSLT
+        const xmlDoc = parser.xmlParse(xmlString);
+        const xsltDoc = parser.xmlParse(xsltString);
+
+        // Aplikace XSLT
+        const vysledek = await xsltEngine.xsltProcess(xmlDoc, xsltDoc);
+
+        // Uložení zpět do eda.xml
+        fs.writeFileSync(edaFile, vysledek, 'utf8');
+        console.log('[ÚSPĚCH] Pohyb aplikován a uložen.');
+
+    } catch (e) {
+        console.error('[CHYBA PŘI TRANSFORMACI]', e.message || e);
+    }
+}
