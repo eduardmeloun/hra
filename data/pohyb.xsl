@@ -45,7 +45,6 @@
         </xsl:copy>
     </xsl:template> 
     
-    
     <xsl:template match="@*|node()">
         <xsl:copy-of select="."/>
     </xsl:template>

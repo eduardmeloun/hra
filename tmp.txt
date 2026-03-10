@@ -1,0 +1,3 @@
+npm run watch-xslt
+node input.js
+npm install
