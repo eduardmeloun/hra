@@ -10,21 +10,11 @@ if (!fs.existsSync(filePath)) {
 }
 
 function pridejAkci(klavesa) {
-    const cas = new Date().toISOString();
-    const novyZaznam = `    <stisk klavesa="${klavesa}" cas="${cas}" />\n`;
+    const novyObsah = `<?xml version="1.0" encoding="UTF-8"?>\n<akce>\n    <stisk klavesa="${klavesa}" />\n</akce>\n`;
 
     try {
-        // Načteme stávající obsah XML
-        let obsah = fs.readFileSync(filePath, 'utf8');
-        
-        // Odstraníme koncový tag </akce> na konci souboru
-        obsah = obsah.replace(/<\/akce>\s*$/, '');
-        
-        // Přidáme nový záznam a znovu uzavřeme tag </akce>
-        obsah += novyZaznam + '</akce>\n';
-        
-        // Uložíme aktualizovaný obsah zpět do souboru
-        fs.writeFileSync(filePath, obsah, 'utf8');
+        // Přepíšeme celý soubor, takže udržíme jen poslední stisknutou klávesu
+        fs.writeFileSync(filePath, novyObsah, 'utf8');
         console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
     } catch (err) {
         console.error('Chyba při zápisu do XML:', err);
