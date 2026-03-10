@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<player name="Eda">
-   <position>
-      <x>1</x>
-      <y>-1</y>
+<player>Eda<position>w<x>-3</x>
+      <y>-2</y>
    </position>
    <inventory><!--  Future inventory items will be added here  --></inventory>
    <stats>

@@ -1,5 +1,13 @@
 {
   "dependencies": {
-    "xslt-processor": "^5.0.4"
+    "saxon-js": "^2.7.0",
+    "xslt3": "^2.7.0"
+  },
+  "scripts": {
+    "build-xslt": "xslt3 -xsl:data/pohyb.xsl -export:data/pohyb.sef.json -t",
+    "watch-xslt": "chokidar \"data/*.xsl\" -c \"npm run build-xslt\""
+  },
+  "devDependencies": {
+    "chokidar-cli": "^3.0.0"
   }
 }

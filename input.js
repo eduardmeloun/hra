@@ -1,7 +1,7 @@
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
-const { Xslt, XmlParser } = require('xslt-processor');
+const SaxonJS = require('saxon-js');
 
 const filePath = path.join(__dirname, 'data', 'akce.xml');
 
@@ -54,7 +54,7 @@ process.stdin.on('keypress', (str, key) => {
 async function aplikujPohyb() {
     const dataDir = path.join(__dirname, 'data');
     const edaFile = path.join(dataDir, 'eda.xml');
-    const xsltFile = path.join(dataDir, 'pohyb.xslt');
+    const sefFile = path.join(dataDir, 'pohyb.sef.json');
 
     // Check if files exist
     if (!fs.existsSync(edaFile)) {
@@ -62,27 +62,20 @@ async function aplikujPohyb() {
         return;
     }
 
-    if (!fs.existsSync(xsltFile)) {
-        console.error('[CHYBA] Soubor pohyb.xslt nebyl nalezen.');
+    if (!fs.existsSync(sefFile)) {
+        console.error('[CHYBA] Soubor pohyb.sef.json nebyl nalezen.');
         return;
     }
 
     try {
-        const xmlString = fs.readFileSync(edaFile, 'utf8');
-        let xsltString = fs.readFileSync(xsltFile, 'utf8');
-
-        const parser = new XmlParser();
-        const xsltEngine = new Xslt();
-
-        // Parsování XML a XSLT
-        const xmlDoc = parser.xmlParse(xmlString);
-        const xsltDoc = parser.xmlParse(xsltString);
-
-        // Aplikace XSLT
-        const vysledek = await xsltEngine.xsltProcess(xmlDoc, xsltDoc);
+        const result = await SaxonJS.transform({
+            stylesheetFileName: sefFile,
+            sourceFileName: edaFile,
+            destination: 'serialized'
+        }, "async");
 
         // Uložení zpět do eda.xml
-        fs.writeFileSync(edaFile, vysledek, 'utf8');
+        fs.writeFileSync(edaFile, result.principalResult, 'utf8');
         console.log('[ÚSPĚCH] Pohyb aplikován a uložen.');
 
     } catch (e) {
