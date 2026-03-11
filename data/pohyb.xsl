@@ -19,6 +19,11 @@
             <xsl:apply-templates select="@*|node()"/>
         </xsl:copy>
     </xsl:template>
+
+    <xsl:variable name="minX" select="0"/>
+<xsl:variable name="maxX" select="30"/>
+<xsl:variable name="minY" select="0"/>
+<xsl:variable name="maxY" select="20"/>
     
     <!-- Update x coordinate -->    
     <xsl:template match="x">
