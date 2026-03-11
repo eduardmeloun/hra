@@ -26,10 +26,11 @@
             <xsl:choose>
                 <xsl:when test="$klavesa = 'a'"><xsl:value-of select=". - 1"/></xsl:when>
                 <xsl:when test="$klavesa = 'd'"><xsl:value-of select=". + 1"/></xsl:when>
+                <xsl:when test="$klavesa = 'reset'"><xsl:value-of select="15"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
             </xsl:choose>            
         </xsl:copy>
-    </xsl:template> 
+    </xsl:template>
     
     <!-- Update y coordinate -->    
     <xsl:template match="y">
@@ -37,6 +38,7 @@
             <xsl:choose>
                 <xsl:when test="$klavesa = 'w'"><xsl:value-of select=". + 1"/></xsl:when>
                 <xsl:when test="$klavesa = 's'"><xsl:value-of select=". - 1"/></xsl:when>
+                <xsl:when test="$klavesa = 'reset'"><xsl:value-of select="1"/></xsl:when>
                 <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
             </xsl:choose>            
         </xsl:copy>
