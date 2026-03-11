@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.11",
     "saxon-js": "^2.7.0",
+    "xpath": "^0.0.34",
     "xslt3": "^2.7.0"
   },
   "scripts": {

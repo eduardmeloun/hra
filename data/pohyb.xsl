@@ -11,9 +11,6 @@
     </xsl:template>
 
     <!-- Load the current key press from akce.xml -->
-    <!-- Load the current key press from akce.xml -->
-    <!-- Load the current key press from akce.xml -->
-    <!-- Load the current key press from akce.xml -->
     <xsl:variable name="klavesa" select="document('akce.xml')/akce/stisk/@klavesa"/>
 
     <xsl:template match="position">

@@ -2,28 +2,14 @@ const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const SaxonJS = require('saxon-js');
+const { DOMParser } = require('@xmldom/xmldom');
+const xpath = require('xpath');
 
 const filePath = path.join(__dirname, 'data', 'akce.xml');
 
 // Inicializace XML souboru, pokud byl smazán nebo neexistuje
 if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, '<?xml version="1.0" encoding="UTF-8"?>\n<akce>\n</akce>\n', 'utf8');
-}
-
-function pridejAkci(klavesa) {
-    const novyObsah = `<?xml version="1.0" encoding="UTF-8"?>\n<akce>\n    <stisk klavesa="${klavesa}" />\n</akce>\n`;
-
-    try {
-        // Přepíšeme celý soubor, takže udržíme jen poslední stisknutou klávesu
-        fs.writeFileSync(filePath, novyObsah, 'utf8');
-        console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
-
-        aplikujPohyb();
-      zobrazPozici();
-
-    } catch (err) {
-        console.error('Chyba při zápisu do XML:', err);
-    }
 }
 
 // Inicializace čtení vstupů z klávesnice
@@ -39,6 +25,8 @@ console.log('Zmáčkni W, A, S nebo D pro záznam akce.');
 console.log('Pro ukončení stiskni Ctrl + C');
 console.log('=========================================');
 
+pridejAkci("reset")
+
 process.stdin.on('keypress', (str, key) => {
     // Ukončení aplikace přes Ctrl+C
     if (key.ctrl && key.name === 'c') {
@@ -51,6 +39,10 @@ process.stdin.on('keypress', (str, key) => {
         pridejAkci(key.name.toLowerCase());
     }
 });
+
+//==============================================================
+//==============================================================
+//==============================================================
 
 async function aplikujPohyb() {
     const dataDir = path.join(__dirname, 'data');
@@ -77,28 +69,48 @@ async function aplikujPohyb() {
 
         // Uložení zpět do eda.xml
         fs.writeFileSync(edaFile, result.principalResult, 'utf8');
-        console.log('[ÚSPĚCH] Pohyb aplikován a uložen.');
+        // console.log('[ÚSPĚCH] Pohyb aplikován a uložen.');
 
     } catch (e) {
         console.error('[CHYBA PŘI TRANSFORMACI]', e.message || e);
     }
 }
 
+//==============================================================
+
+function pridejAkci(klavesa) {
+    let novyObsah = `<?xml version="1.0" encoding="UTF-8"?>\n<akce>\n    <stisk klavesa="${klavesa}" />\n</akce>\n`;
+
+    try {
+        // Přepíšeme celý soubor, takže udržíme jen poslední stisknutou klávesu
+        fs.writeFileSync(filePath, novyObsah, 'utf8');
+        // console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
+
+        aplikujPohyb();
+        zobrazPozici();
+
+    } catch (err) {
+        console.error('Chyba při zápisu do XML:', err);
+    }
+}
+
+//==============================================================
 
 function zobrazPozici() {
     const filePath = "data/eda.xml";
 
     try {
-        const data = fs.readFileSync(filePath, "utf8");
+        const xml = fs.readFileSync(filePath, "utf8");
+        const doc = new DOMParser().parseFromString(xml, 'text/xml');
 
-        const x = data.match(/<x>(.*?)<\/x>/)[1];
-        const y = data.match(/<y>(.*?)<\/y>/)[1];
+        const x = xpath.select1("/player/position/x/text()", doc);
+        const y = xpath.select1("/player/position/y/text()", doc);
 
         console.log(`[POZICE] x: ${x}, y: ${y}`);
-
-
 
     } catch (err) {
         console.error("Chyba při čtení XML:", err);
     }
 }
+
+//==============================================================
