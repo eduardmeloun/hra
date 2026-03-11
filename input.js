@@ -19,29 +19,40 @@ if (process.stdin.isTTY) {
     process.stdin.setRawMode(true);
 }
 
-console.log('=========================================');
-console.log('Sledování kláves aktivní.');
-console.log('Zmáčkni W, A, S nebo D pro záznam akce.');
-console.log('Pro ukončení stiskni Ctrl + C');
-console.log('=========================================');
-
-pridejAkci("reset")
-
-process.stdin.on('keypress', (str, key) => {
-    // Ukončení aplikace přes Ctrl+C
-    if (key.ctrl && key.name === 'c') {
-        console.log('Ukončuji aplikaci...');
-        process.exit();
-    }
-
-    // Zpracování kláves w, a, s, d (velká i malá písmena)
-    if (key.name && ['w', 'a', 's', 'd'].includes(key.name.toLowerCase())) {
-        pridejAkci(key.name.toLowerCase());
-    }
-});
+run().catch(err => console.error('[CHYBA PŘI STARTU]', err));
 
 //==============================================================
 //==============================================================
+//==============================================================
+
+async function readInput() {
+    process.stdin.on('keypress', async (str, key) => {
+        // Ukončení aplikace přes Ctrl+C
+        if (key.ctrl && key.name === 'c') {
+            console.log('Ukončuji aplikaci...');
+            process.exit();
+        }
+
+        // Zpracování kláves w, a, s, d (velká i malá písmena)
+        if (key.name && ['w', 'a', 's', 'd'].includes(key.name.toLowerCase())) {
+            await pridejAkci(key.name.toLowerCase());
+        }
+    });
+}
+
+//==============================================================
+
+async function run() {
+    console.log('=========================================');
+    console.log('Sledování kláves aktivní.');
+    console.log('Zmáčkni W, A, S nebo D pro záznam akce.');
+    console.log('Pro ukončení stiskni Ctrl + C');
+    console.log('=========================================');
+
+    await pridejAkci("reset");
+    await readInput();
+}
+
 //==============================================================
 
 async function aplikujPohyb() {
@@ -78,7 +89,7 @@ async function aplikujPohyb() {
 
 //==============================================================
 
-function pridejAkci(klavesa) {
+async function pridejAkci(klavesa) {
     let novyObsah = `<?xml version="1.0" encoding="UTF-8"?>\n<akce>\n    <stisk klavesa="${klavesa}" />\n</akce>\n`;
 
     try {
@@ -86,8 +97,8 @@ function pridejAkci(klavesa) {
         fs.writeFileSync(filePath, novyObsah, 'utf8');
         // console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
 
-        aplikujPohyb();
-        zobrazPozici();
+        await aplikujPohyb();
+        await zobrazPozici();
 
     } catch (err) {
         console.error('Chyba při zápisu do XML:', err);
@@ -96,7 +107,7 @@ function pridejAkci(klavesa) {
 
 //==============================================================
 
-function zobrazPozici() {
+async function zobrazPozici() {
     const filePath = "data/eda.xml";
 
     try {
