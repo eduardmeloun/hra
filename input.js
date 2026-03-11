@@ -19,7 +19,7 @@ function pridejAkci(klavesa) {
         console.log(`[ULOŽENO] Klávesa: ${klavesa}`);
 
         aplikujPohyb();
-      
+      zobrazPozici();
 
     } catch (err) {
         console.error('Chyba při zápisu do XML:', err);
@@ -86,15 +86,19 @@ async function aplikujPohyb() {
 
 
 function zobrazPozici() {
+    const filePath = "data/eda.xml";
 
-     const filePath = "data/eda.xml"; 
-     try { 
+    try {
         const data = fs.readFileSync(filePath, "utf8");
-         const x = data.match(/<x>(.*?)<\/x>/)[1];
-          const y = data.match(/<y>(.*?)<\/y>/)[1];
-          
-           console.log([POZICE] x: ${x}, y: ${y});
-         } catch (err) {
-             console.error("Chyba při čtení XML:", err);
-             }
-             }
+
+        const x = data.match(/<x>(.*?)<\/x>/)[1];
+        const y = data.match(/<y>(.*?)<\/y>/)[1];
+
+        console.log(`[POZICE] x: ${x}, y: ${y}`);
+
+
+
+    } catch (err) {
+        console.error("Chyba při čtení XML:", err);
+    }
+}
