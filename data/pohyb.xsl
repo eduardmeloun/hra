@@ -26,30 +26,83 @@
 <xsl:variable name="maxY" select="20"/>
     
     <!-- Update x coordinate -->    
-    <xsl:template match="x">
-        <xsl:copy>
-            <xsl:choose>
-                <xsl:when test="$klavesa = 'a'"><xsl:value-of select=". - 1"/></xsl:when>
-                <xsl:when test="$klavesa = 'd'"><xsl:value-of select=". + 1"/></xsl:when>
-                <xsl:when test="$klavesa = 'reset'"><xsl:value-of select="15"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-            </xsl:choose>            
-        </xsl:copy>
-    </xsl:template>
+  <xsl:template match="x">
+    <xsl:variable name="novyX">
+        <xsl:choose>
+            <xsl:when test="$klavesa = 'a'"> 
+                <xsl:value-of select=". - 1"/>
+            </xsl:when>
+            <xsl:when test="$klavesa = 'd'">
+                <xsl:value-of select=". + 1"/>
+            </xsl:when>
+            <xsl:when test="$klavesa = 'reset'">
+                <xsl:value-of select="15"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+<xsl:variable name="ohraniceneX">
+    <xsl:choose>
+        <xsl:when test="$novyX &lt; $minX">
+            <xsl:value-of select="$minX"/>
+        </xsl:when>
+        <xsl:when test="$novyX &gt; $maxX">
+            <xsl:value-of select="$maxX"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="$novyX"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+
+
+    <xsl:copy>
+        <xsl:value-of select="$ohraniceneX"/>
+    </xsl:copy>
+</xsl:template>
     
-    <!-- Update y coordinate -->    
-    <xsl:template match="y">
-        <xsl:copy>
-            <xsl:choose>
-                <xsl:when test="$klavesa = 'w'"><xsl:value-of select=". + 1"/></xsl:when>
-                <xsl:when test="$klavesa = 's'"><xsl:value-of select=". - 1"/></xsl:when>
-                <xsl:when test="$klavesa = 'reset'"><xsl:value-of select="1"/></xsl:when>
-                <xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
-            </xsl:choose>            
-        </xsl:copy>
-    </xsl:template> 
-    
-    <xsl:template match="@*|node()">
+ 
+   
+ <xsl:template match="y">
+    <xsl:variable name="novyY">
+        <xsl:choose>
+            <xsl:when test="$klavesa = 'w'">
+                <xsl:value-of select=". + 1"/>
+            </xsl:when>
+            <xsl:when test="$klavesa = 's'">
+                <xsl:value-of select=". - 1"/>
+            </xsl:when>
+            <xsl:when test="$klavesa = 'reset'">
+                <xsl:value-of select="1"/>
+            </xsl:when>
+            <xsl:otherwise>
+                <xsl:value-of select="."/>
+            </xsl:otherwise>
+        </xsl:choose>
+    </xsl:variable>
+
+  <xsl:variable name="ohraniceneY">
+    <xsl:choose>
+        <xsl:when test="$novyY &lt; $minY">
+            <xsl:value-of select="$minY"/>
+        </xsl:when>
+        <xsl:when test="$novyY &gt; $maxY">
+            <xsl:value-of select="$maxY"/>
+        </xsl:when>
+        <xsl:otherwise>
+            <xsl:value-of select="$novyY"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+    <xsl:copy>
+        <xsl:value-of select="$ohraniceneY"/>
+    </xsl:copy>
+</xsl:template>
+
+ <xsl:template match="@*|node()">
         <xsl:copy-of select="."/>
     </xsl:template>
 </xsl:stylesheet>
