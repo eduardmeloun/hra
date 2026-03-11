@@ -16,7 +16,7 @@
     <xsl:template match="position">
         <xsl:copy>
             <!-- <xsl:value-of select="$klavesa"/> -->
-            <xsl:apply-templates select="@*|node()"/>
+            <xsl:apply-templates select="node()"/>
         </xsl:copy>
     </xsl:template>
 
