@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <player name="Eda">
    <position>
-      <x>30</x>
-      <y>20</y>
+      <x>14</x>
+      <y>18</y>
    </position>
    <inventory><!--  Future inventory items will be added here  --></inventory>
    <stats>
-      <health>100</health>
+      <health>75</health>
       <level>1</level>
       <experience>0</experience>
    </stats>
